@@ -107,7 +107,7 @@ int main() {
         if (line.empty())
             continue;
         vector<string> lineSplit;
-        str_split(line, lineSplit, "\t");
+        str_split(line, lineSplit, ",");
         uint64_t app_id = atoll(lineSplit[0].c_str());
         uint64_t offset = atoll(lineSplit[2].c_str());
         uint64_t length = atoll(lineSplit[3].c_str());
