@@ -84,7 +84,7 @@ int main() {
 
     // Allocate buffer for IO
     // 分配10M大小的缓冲区
-    char *buffer = new char[MAX_IOSIZE];
+    char *buffer;
     posix_memalign((void **)&buffer, 512, MAX_IOSIZE);
     iovecs[0].iov_base = buffer;
     if (!buffer) {
@@ -142,8 +142,12 @@ int main() {
         }
         double timeuse = 1000000000 * (end.tv_sec - start.tv_sec) + end.tv_nsec - start.tv_nsec;
         if(app_id <= 10 && app_id >= 0){
-            latency[app_id] = timeuse;
+            latency[app_id] += timeuse;
         }
+    }
+
+    for(int i = 0; i <=10; i++){
+        cout << "app_id: " << i << " latency: " << latency[i] << endl;
     }
 
     // Cleanup
