@@ -56,16 +56,16 @@ void submit_io(struct io_uring *ring, struct io_request *req) {
     struct io_uring_sqe *sqe = io_uring_get_sqe(ring);
     io_uring_prep_rw(req->read ? IORING_OP_READV : IORING_OP_WRITEV, sqe, req->fd, req->iovecs, 1, req->offset);
     // printf("sqe->user_data:%llu\n", sqe->user_data);
-    sqe->user_data = req->user_data;
+    sqe->usr_flag = req->user_data;
     io_uring_submit(ring);
 }
 
 void wait_completion(struct io_uring *ring) {
     struct io_uring_cqe *cqe;
     io_uring_wait_cqe(ring, &cqe);
-    printf("cqe->user_data:%llu\n", cqe->user_data);
+    //printf("cqe->user_data:%llu\n", cqe->user_data);
     //打印res
-    cout << "res: " << cqe->res << endl;
+    //cout << "res: " << cqe->res << endl;
     io_uring_cqe_seen(ring, cqe);
 }
 
@@ -141,7 +141,7 @@ int main() {
             clock_gettime(CLOCK_MONOTONIC, &end);
         }
         double timeuse = 1000000000 * (end.tv_sec - start.tv_sec) + end.tv_nsec - start.tv_nsec;
-        if(app_id <= 10 && app_id >= 0){
+        if(app_id <= 10 && app_id >= 0 && lineSplit[1] == "R"){
             latency[app_id] += timeuse;
         }
     }
