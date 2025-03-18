@@ -93,7 +93,7 @@ int main() {
     }
     //创建输入文件流
     string line;
-    ifstream  file("../Trace/mytest.log");
+    ifstream  file("../Trace/out.csv");
     if (!file.is_open()) {
         cerr << "Failed to open trace file." << endl;
         return 1;
@@ -111,7 +111,7 @@ int main() {
         uint64_t app_id = atoll(lineSplit[0].c_str());
         uint64_t offset = atoll(lineSplit[2].c_str());
         uint64_t length = atoll(lineSplit[3].c_str());
-        iovecs[0].iov_len = length;
+        //iovecs[0].iov_len = length;
         if (length > 10 * MB) {
             continue;
         }
