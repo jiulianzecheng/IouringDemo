@@ -84,7 +84,7 @@ int main() {
 
     // Allocate buffer for IO
     // 分配10M大小的缓冲区
-    char *buffer;
+    char *buffer = new char[MAX_IOSIZE];
     posix_memalign((void **)&buffer, 512, MAX_IOSIZE);
     iovecs[0].iov_base = buffer;
     if (!buffer) {
