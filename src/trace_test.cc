@@ -52,7 +52,7 @@ void str_split(const string& str, Container& cont,
 
 void submit_io(struct io_uring *ring, struct io_request *req) {
     //打印IO请求
-    cout <<" offset: " << req->offset << " len: " << req->len << " read: " << req->read << endl;
+    //cout <<" offset: " << req->offset << " len: " << req->len << " read: " << req->read << endl;
     struct io_uring_sqe *sqe = io_uring_get_sqe(ring);
     io_uring_prep_rw(req->read ? IORING_OP_READV : IORING_OP_WRITEV, sqe, req->fd, req->iovecs, 1, req->offset);
     // printf("sqe->user_data:%llu\n", sqe->user_data);
@@ -63,7 +63,7 @@ void submit_io(struct io_uring *ring, struct io_request *req) {
 void wait_completion(struct io_uring *ring) {
     struct io_uring_cqe *cqe;
     io_uring_wait_cqe(ring, &cqe);
-    // printf("cqe->user_data:%llu\n", cqe->user_data);
+    printf("cqe->user_data:%llu\n", cqe->user_data);
     //打印res
     cout << "res: " << cqe->res << endl;
     io_uring_cqe_seen(ring, cqe);
