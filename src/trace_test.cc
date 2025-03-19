@@ -119,7 +119,7 @@ int main() {
         // Align offset to 4KB
         offset = offset / (4 * KB) * (4 * KB);
 
-        cout << "offset: " << offset << " length: " << length << endl;
+        //cout << "offset: " << offset << " length: " << length << endl;
 
         if (lineSplit[1] == "R") {
             // Read operation
