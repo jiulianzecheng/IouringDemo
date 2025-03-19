@@ -146,9 +146,14 @@ int main() {
         }
     }
 
+    double total = 0;
+
     for(int i = 0; i <=10; i++){
         cout << "app_id: " << i << " latency: " << latency[i] << endl;
+        total += latency[i];
     }
+
+    cout << "total latency: " << total << endl;
 
     // Cleanup
     delete[] buffer;
