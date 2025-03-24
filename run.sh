@@ -15,7 +15,11 @@ fi
 mv trace_test "$BIN_DIR/"
 
 # 运行程序
+for i in{1..5}
+do
+echo "Run trace_test $i"
 "$BIN_DIR/trace_test" >> ./log.txt
+done
 
 # 如果需要传递参数，可以像下面这样使用：
 # "$BIN_DIR/trace_test" 参数1 参数2 ...
