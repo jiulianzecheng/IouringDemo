@@ -122,11 +122,10 @@ int main() {
         //cout << "offset: " << offset << " length: " << length << endl;
 
         if (lineSplit[1] == "R") {
+            io_request req = {fd, offset, length, iovecs, true, 0};
             // Read operation
             if(app_id<=10 && app_id >= 0)
-                io_request req = {fd, offset, length, iovecs, true, 1};
-            else
-                io_request req = {fd, offset, length, iovecs, true, 0};
+                req.user_data = 1;
             clock_gettime(CLOCK_MONOTONIC, &start);
             submit_io(&ring, &req);
             wait_completion(&ring);
