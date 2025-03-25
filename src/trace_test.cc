@@ -128,6 +128,10 @@ int main() {
             submit_io(&ring, &req);
             wait_completion(&ring);
             clock_gettime(CLOCK_MONOTONIC, &end);
+            double timeuse = 1000000000 * (end.tv_sec - start.tv_sec) + end.tv_nsec - start.tv_nsec;
+            if(app_id <= 10 && app_id >= 0 && lineSplit[1] == "R"){
+                latency[app_id] += timeuse;
+            }
         }
     //      else if (lineSplit[1] == "W") {
     //         // Write operation
@@ -141,11 +145,7 @@ int main() {
     //         wait_completion(&ring);
     //         clock_gettime(CLOCK_MONOTONIC, &end);
     //     }
-    //     double timeuse = 1000000000 * (end.tv_sec - start.tv_sec) + end.tv_nsec - start.tv_nsec;
-    //     if(app_id <= 10 && app_id >= 0 && lineSplit[1] == "R"){
-    //         latency[app_id] += timeuse;
-    //     }
-    // }
+    }
 
     double total = 0;
 
