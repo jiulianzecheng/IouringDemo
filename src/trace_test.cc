@@ -123,7 +123,10 @@ int main() {
 
         if (lineSplit[1] == "R") {
             // Read operation
-            io_request req = {fd, offset, length, iovecs, true, app_id};
+            if(app_id<=10 && app_id >= 0)
+                io_request req = {fd, offset, length, iovecs, true, 1};
+            else
+                io_request req = {fd, offset, length, iovecs, true, 0};
             clock_gettime(CLOCK_MONOTONIC, &start);
             submit_io(&ring, &req);
             wait_completion(&ring);
@@ -134,7 +137,7 @@ int main() {
             for (int i = 0; i < length; i++) {
                 buffer[i] = rand() % 256;
             }
-            io_request req = {fd, offset, length, iovecs, false, app_id};
+            io_request req = {fd, offset, length, iovecs, false, 0};
             clock_gettime(CLOCK_MONOTONIC, &start);
             submit_io(&ring, &req);
             wait_completion(&ring);
