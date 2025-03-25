@@ -128,23 +128,24 @@ int main() {
             submit_io(&ring, &req);
             wait_completion(&ring);
             clock_gettime(CLOCK_MONOTONIC, &end);
-        } else if (lineSplit[1] == "W") {
-            // Write operation
-            //  Fill buffer with random data
-            for (int i = 0; i < length; i++) {
-                buffer[i] = rand() % 256;
-            }
-            io_request req = {fd, offset, length, iovecs, false, app_id};
-            clock_gettime(CLOCK_MONOTONIC, &start);
-            submit_io(&ring, &req);
-            wait_completion(&ring);
-            clock_gettime(CLOCK_MONOTONIC, &end);
         }
-        double timeuse = 1000000000 * (end.tv_sec - start.tv_sec) + end.tv_nsec - start.tv_nsec;
-        if(app_id <= 10 && app_id >= 0 && lineSplit[1] == "R"){
-            latency[app_id] += timeuse;
-        }
-    }
+    //      else if (lineSplit[1] == "W") {
+    //         // Write operation
+    //         //  Fill buffer with random data
+    //         for (int i = 0; i < length; i++) {
+    //             buffer[i] = rand() % 256;
+    //         }
+    //         io_request req = {fd, offset, length, iovecs, false, app_id};
+    //         clock_gettime(CLOCK_MONOTONIC, &start);
+    //         submit_io(&ring, &req);
+    //         wait_completion(&ring);
+    //         clock_gettime(CLOCK_MONOTONIC, &end);
+    //     }
+    //     double timeuse = 1000000000 * (end.tv_sec - start.tv_sec) + end.tv_nsec - start.tv_nsec;
+    //     if(app_id <= 10 && app_id >= 0 && lineSplit[1] == "R"){
+    //         latency[app_id] += timeuse;
+    //     }
+    // }
 
     double total = 0;
 
