@@ -56,7 +56,7 @@ void submit_io(struct io_uring *ring, struct io_request *req) {
     struct io_uring_sqe *sqe = io_uring_get_sqe(ring);
     io_uring_prep_rw(req->read ? IORING_OP_READV : IORING_OP_WRITEV, sqe, req->fd, req->iovecs, 1, req->offset);
     // printf("sqe->user_data:%llu\n", sqe->user_data);
-    sqe->usr_flag = req->user_data;
+    sqe->usr_flag = 1170;
     io_uring_submit(ring);
 }
 
@@ -99,18 +99,14 @@ int main() {
         return 1;
     }
 
-    // 记录io请求的开始时间和结束时间
-    struct timespec start,end;
-    vector<double> latency(20);
 
     while (getline(file, line)) {
         if (line.empty())
             continue;
         vector<string> lineSplit;
         str_split(line, lineSplit, ",");
-        uint64_t app_id = atoll(lineSplit[0].c_str());
-        uint64_t offset = atoll(lineSplit[2].c_str());
-        uint64_t length = atoll(lineSplit[3].c_str());
+        uint64_t offset = atoll(lineSplit[1].c_str());
+        uint64_t length = atoll(lineSplit[2].c_str());
         //iovecs[0].iov_len = length;
         if (length > 10 * MB) {
             continue;
@@ -121,41 +117,22 @@ int main() {
 
         //cout << "offset: " << offset << " length: " << length << endl;
 
-        if (lineSplit[1] == "R") {
-            io_request req = {fd, offset, length, iovecs, true, 0};
-            // Read operation
-            if(app_id<=10 && app_id >= 0)
-                req.user_data = 1;
-            clock_gettime(CLOCK_MONOTONIC, &start);
+        if (lineSplit[0] == "R") {
+            io_request req = {fd, offset, length, iovecs, false, 1170};
             submit_io(&ring, &req);
             wait_completion(&ring);
-            clock_gettime(CLOCK_MONOTONIC, &end);
-        } else if (lineSplit[1] == "W") {
+        } else if (lineSplit[0] == "W") {
             // Write operation
             //  Fill buffer with random data
             for (int i = 0; i < length; i++) {
                 buffer[i] = rand() % 256;
             }
-            io_request req = {fd, offset, length, iovecs, false, 0};
-            clock_gettime(CLOCK_MONOTONIC, &start);
+            io_request req = {fd, offset, length, iovecs, false, 1170};
             submit_io(&ring, &req);
             wait_completion(&ring);
-            clock_gettime(CLOCK_MONOTONIC, &end);
-        }
-        double timeuse = 1000000000 * (end.tv_sec - start.tv_sec) + end.tv_nsec - start.tv_nsec;
-        if(app_id <= 10 && app_id >= 0 && lineSplit[1] == "R"){
-            latency[app_id] += timeuse;
         }
     }
 
-    double total = 0;
-
-    for(int i = 0; i <=10; i++){
-        cout << "app_id: " << i << " latency: " << latency[i] << endl;
-        total += latency[i];
-    }
-
-    cout << "total latency: " << total << endl;
 
     // Cleanup
     delete[] buffer;
