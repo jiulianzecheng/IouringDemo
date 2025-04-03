@@ -52,20 +52,20 @@ void str_split(const string& str, Container& cont,
 
 void submit_io(struct io_uring *ring, struct io_request *req) {
     //打印IO请求
-    //cout <<" offset: " << req->offset << " len: " << req->len << " read: " << req->read << endl;
+    cout <<" offset: " << req->offset << " len: " << req->len << " read: " << req->read << endl;
     struct io_uring_sqe *sqe = io_uring_get_sqe(ring);
     io_uring_prep_rw(req->read ? IORING_OP_READV : IORING_OP_WRITEV, sqe, req->fd, req->iovecs, 1, req->offset);
-    // printf("sqe->user_data:%llu\n", sqe->user_data);
-    sqe->usr_flag = 1170;
+    sqe->usr_flag = req->user_data;
+    printf("sqe->user_data:%llu\n", sqe->usr_flag);
     io_uring_submit(ring);
 }
 
 void wait_completion(struct io_uring *ring) {
     struct io_uring_cqe *cqe;
     io_uring_wait_cqe(ring, &cqe);
-    //printf("cqe->user_data:%llu\n", cqe->user_data);
+    printf("cqe->user_data:%llu\n", cqe->user_data);
     //打印res
-    //cout << "res: " << cqe->res << endl;
+    cout << "res: " << cqe->res << endl;
     io_uring_cqe_seen(ring, cqe);
 }
 
@@ -93,7 +93,7 @@ int main() {
     }
     //创建输入文件流
     string line;
-    ifstream  file("../Trace/out.csv");
+    ifstream  file("../Trace/mytest.log");
     if (!file.is_open()) {
         cerr << "Failed to open trace file." << endl;
         return 1;
@@ -104,10 +104,10 @@ int main() {
         if (line.empty())
             continue;
         vector<string> lineSplit;
-        str_split(line, lineSplit, ",");
+        str_split(line, lineSplit, "\t");
         uint64_t offset = atoll(lineSplit[1].c_str());
         uint64_t length = atoll(lineSplit[2].c_str());
-        //iovecs[0].iov_len = length;
+        iovecs[0].iov_len = length;
         if (length > 10 * MB) {
             continue;
         }
@@ -118,7 +118,7 @@ int main() {
         //cout << "offset: " << offset << " length: " << length << endl;
 
         if (lineSplit[0] == "R") {
-            io_request req = {fd, offset, length, iovecs, false, 1170};
+            io_request req = {fd, offset, length, iovecs, true, 1170};
             submit_io(&ring, &req);
             wait_completion(&ring);
         } else if (lineSplit[0] == "W") {
